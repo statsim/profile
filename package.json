@@ -1,0 +1,27 @@
+{
+  "name": "statsim-profile",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/main.js",
+  "dependencies": {
+    "csv-parse": "^4.6.3",
+    "filestream": "^5.0.0",
+    "online-stats": "^1.3.0",
+    "through2": "^3.0.1",
+    "tui-chart": "^3.8.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "nodemon": "^1.19.4",
+    "tape": "^4.11.0",
+    "uglify-es": "^3.3.9"
+  },
+  "scripts": {
+    "build": "browserify src/main.js | uglifyjs -cm > dist/bundle.js",
+    "build-dev": "browserify src/main.js -o dist/bundle.js --debug",
+    "watch": "nodemon --watch src --ext js,css,html --exec 'npm run build-dev'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Zemlyansky",
+  "license": "ISC"
+}
