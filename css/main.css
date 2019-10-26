@@ -1,4 +1,4 @@
-body {
+html, body {
   font-family: sans-serif;
   font-weight: 300;
 }
@@ -14,20 +14,36 @@ dl {
 dt {
   float: left;
   padding: 0;
-  margin: 2px 10px 2px 0;
+  margin: 5px 10px 2px 0;
   clear: left;
 }
 
 dd {
   float: left;
   padding: 0;
-  margin: 2px 10px 2px 0;
+  margin: 5px 10px 2px 0;
   font-weight: 500;
+}
+
+#logo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  margin: 0;
+  padding: 5px 6px 5px 6px;
+  font-weight: 400;
+  font-size: 17px;
+  border-bottom: 2px solid #00a9ff;
+  border-left: 2px solid  #00a9ff;
 }
 
 .section {
   margin-top: 10px;
   margin-bottom: 30px;
+}
+
+.summary, #stats, #input {
+  margin-left: 10px;
 }
 
 #progress {
@@ -39,11 +55,17 @@ dd {
 }
 
 .block {
-  width: 27%;
   display: inline-block;
   margin: 10px;
   padding: 2px 15px 10px 15px;
   box-shadow: 0 0 20px #E3E3E3;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  align-items: flex-start;
 }
 
 .block dt {
@@ -51,6 +73,40 @@ dd {
 }
 
 .block h4 {
-  margin: 12px 0;
+  margin: 15px 0 5px 10px;
   font-weight: 300;
+  min-width: 300px;
+}
+
+.block dl {
+  padding: 15px;
+}
+
+.block .count-chart {
+  padding: 5px;
+}
+
+#drag {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  text-align: center;
+  padding: 30px 40px;
+  border: 2px dashed #a0cbff;
+}
+
+#drag .drag-icon {
+  font-size: 50px;
+  color: #0072FF;
+}
+
+#drag .drag-text h4 {
+  font-weight: 300;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+#drag .drag-text p {
+  font-size: 12px;
 }

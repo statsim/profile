@@ -8,11 +8,19 @@
     <link rel="stylesheet" href="css/main.css" media="screen">
   </head>
   <body>
+    <h3 id="logo">profile</h3>
     <input id="input" type="file" multiple="false"></input>
     <button id="stop" style="display: none">Stop</button>
     <p id="stats"></p>
     <div id="output"></div>
     <div id="progress"></div>
+    <div id="drag">
+      <div class="drag-icon">↶</div>
+      <div class="drag-text">
+        <h4>Drag & Drop file here for profiling</h4>
+        <p>Data will be processed locally (on your machine) </p>
+      </div>
+    </div>
     <script src="dist/bundle.js"></script>
   </body>
 </html>

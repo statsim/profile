@@ -7,10 +7,10 @@ const dnd = require('drag-and-drop-files')
 
 function createDatasetSummary (results) {
   const container = document.createElement('div')
-  container.className = 'section'
+  container.className = 'section summary'
 
   const title = document.createElement('h2')
-  title.innerText = 'Overview'
+  title.innerText = results.name
   container.appendChild(title)
 
   let missingCells = 0
@@ -87,39 +87,30 @@ function createHistogram (hist) {
 
   const data = {
     categories: b.slice(0, -1).map(bin => bin.toFixed(1)),
-    series: {
-      column: [
-        {
-          name: 'Values',
-          data: h
-        }
-      ],
-      line: [
-        {
-          name: 'Values',
-          data: h
-        }
-      ]
-    }
+    series: [{
+      name: 'Values',
+      data: h
+    }]
   }
 
   const options = {
     chart: {
       width: 300,
       height: 220,
-      title: 'Histogram'
+      title: 'Distribution'
     },
     yAxis: [
       {
         title: 'Frequency',
         chartType: 'column',
-        labelMargin: 15
+        labelMargin: 5
       }
     ],
     xAxis: {
       title: 'Values'
     },
     series: {
+      showDot: false,
       spline: true,
       showLabel: false
     },
@@ -132,7 +123,7 @@ function createHistogram (hist) {
     usageStatistics: false
   }
 
-  chart.comboChart(histContainer, data, options)
+  chart.lineChart(histContainer, data, options)
 
   return histContainer
 }
@@ -174,8 +165,11 @@ function createVariablesSummary (results) {
           appendToList(stat, (column.stats[stat]).toFixed(2))
         })
 
-      let hist = createHistogram(column.hist)
-      block.appendChild(hist)
+      // If number of unique numerical values >20, show histogram/distribution
+      if ((column.countValues === null) || (Object.keys(column.countValues).length > 20)) {
+        let hist = createHistogram(column.hist)
+        block.appendChild(hist)
+      }
     }
 
     // Column has counter
@@ -317,6 +311,7 @@ function process (files) {
   const finalize = () => {
     const results = {
       'n': n,
+      'name': file.name,
       'comments': parser.info.comment_lines,
       'empty': parser.info.empty_lines,
       'invalid_length': parser.info.invalid_field_length,
