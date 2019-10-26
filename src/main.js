@@ -3,6 +3,7 @@ const ReadStream = require('filestream').read
 const Stats = require('online-stats')
 const chart = require('tui-chart')
 const through2 = require('through2')
+const dnd = require('drag-and-drop-files')
 
 function createDatasetSummary (results) {
   const container = document.createElement('div')
@@ -78,6 +79,64 @@ function createTypeSummary (results) {
   return container
 }
 
+function createHistogram (hist) {
+  const histContainer = document.createElement('div')
+
+  const [h, b] = hist.value
+  // const bins = h.map((_, i) => b[i].toFixed(1) + '-' + b[i + 1].toFixed(1))
+
+  const data = {
+    categories: b.slice(0, -1).map(bin => bin.toFixed(1)),
+    series: {
+      column: [
+        {
+          name: 'Values',
+          data: h
+        }
+      ],
+      line: [
+        {
+          name: 'Values',
+          data: h
+        }
+      ]
+    }
+  }
+
+  const options = {
+    chart: {
+      width: 300,
+      height: 220,
+      title: 'Histogram'
+    },
+    yAxis: [
+      {
+        title: 'Frequency',
+        chartType: 'column',
+        labelMargin: 15
+      }
+    ],
+    xAxis: {
+      title: 'Values'
+    },
+    series: {
+      spline: true,
+      showLabel: false
+    },
+    legend: {
+      visible: false
+    },
+    chartExportMenu: {
+      visible: false
+    },
+    usageStatistics: false
+  }
+
+  chart.comboChart(histContainer, data, options)
+
+  return histContainer
+}
+
 function createVariablesSummary (results) {
   const container = document.createElement('div')
   container.className = 'section'
@@ -87,6 +146,7 @@ function createVariablesSummary (results) {
   container.appendChild(title)
 
   results.columns.forEach(column => {
+    console.log('Create summary for column:', column.name)
     const block = document.createElement('div')
     block.className = 'block'
 
@@ -94,21 +154,91 @@ function createVariablesSummary (results) {
     blockName.innerText = column.name
     block.appendChild(blockName)
 
-    // Show stats if exist
-    if (column.stats) {
-      const statList = document.createElement('dl')
-      Object.keys(column.stats).forEach(stat => {
-        const dt = document.createElement('dt')
-        dt.innerText = stat + ':'
-        statList.appendChild(dt)
-        const dd = document.createElement('dd')
-        dd.innerText = (column.stats[stat]).toFixed(2)
-        statList.appendChild(dd)
-      })
-      block.appendChild(statList)
+    const statList = document.createElement('dl')
+    block.appendChild(statList)
+
+    const appendToList = (t, d) => {
+      const dt = document.createElement('dt')
+      dt.innerText = t + ':'
+      statList.appendChild(dt)
+      const dd = document.createElement('dd')
+      dd.innerText = d
+      statList.appendChild(dd)
     }
 
+    // Show stats if exist
+    if (column.stats) {
+      Object.keys(column.stats)
+        .filter(stat => (stat !== 'n'))
+        .forEach(stat => {
+          appendToList(stat, (column.stats[stat]).toFixed(2))
+        })
+
+      let hist = createHistogram(column.hist)
+      block.appendChild(hist)
+    }
+
+    // Column has counter
     if (column.countValues) {
+      const topNumber = 5
+      const sorted = Object.keys(column.countValues).sort((a, b) => column.countValues[b] - column.countValues[a])
+      console.log('Counted values:', column.countValues, sorted)
+
+      let topValues = sorted.slice(0, topNumber)
+      let dataCounter = topValues.map(v => column.countValues[v])
+
+      appendToList('Distinct', `${sorted.length} (${(100 * sorted.length / results.n).toFixed(2)}%)`)
+
+      if (topNumber < sorted.length) {
+        let other = sorted.slice(5).reduce((a, v) => a + column.countValues[v], 0)
+        topValues = topValues.concat('Other')
+        dataCounter = dataCounter.concat(other)
+      }
+
+      const chartContainer = document.createElement('div')
+      chartContainer.className = 'count-chart'
+
+      const data = {
+        categories: topValues,
+        series: [
+          {
+            name: 'Count',
+            data: dataCounter
+          }
+        ]
+      }
+      let options = {
+        chart: {
+          width: 300,
+          height: 220,
+          title: `Top ${topNumber < sorted.length ? topNumber : sorted.length} of ${sorted.length} values`,
+          format: '1,000'
+        },
+        yAxis: {
+          title: 'Values'
+        },
+        xAxis: {
+          title: 'Count',
+          min: 0
+        },
+        series: {
+          showLabel: false
+        },
+        legend: {
+          visible: false
+        },
+        chartExportMenu: {
+          visible: false
+        },
+        usageStatistics: false
+      }
+      chart.barChart(chartContainer, data, options)
+      block.appendChild(chartContainer)
+    }
+
+    // Missing values
+    if (column.countTypes['missing']) {
+      appendToList('Missing', `${column.countTypes['missing']} (${(100 * column.countTypes['missing'] / results.n).toFixed(2)}%)`)
     }
 
     container.appendChild(block)
@@ -130,11 +260,14 @@ function generateOutput (el, results) {
 }
 
 const stopButton = document.getElementById('stop')
+const drag = document.getElementById('drag')
 
-document.getElementById('input').onchange = (e) => {
-  // Get file from input
-  const file = e.target.files[0]
+function process (files) {
+  const file = files[0]
   const size = file.size
+
+  // Clear body background (dnd)
+  drag.style.display = 'none'
 
   // Initialize read stream
   const stream = new ReadStream(file, {chunkSize: 10240})
@@ -192,6 +325,7 @@ document.getElementById('input').onchange = (e) => {
       'columns': columns.map(c => ({
         'name': c.name,
         'stats': c.stats ? c.stats.values : null,
+        'hist': c.hist ? c.hist : null,
         'countValues': c.countValues ? c.countValues.values : null,
         'countTypes': c.countTypes ? c.countTypes.values : null
       }))
@@ -228,12 +362,15 @@ document.getElementById('input').onchange = (e) => {
             column.type = 'categorical'
           }
           */
-          column.stats = Stats.Series(
-            Stats.Min(),
-            Stats.Max(),
-            Stats.Mean(),
-            Stats.Std()
-          )
+          column.stats = Stats.Series([
+            { stat: Stats.Mean(), name: 'Average' },
+            { stat: Stats.Variance({ddof: 1}), name: 'Variance' },
+            { stat: Stats.Std(), name: 'Stdev' },
+            { stat: Stats.Min(), name: 'Min' },
+            { stat: Stats.Max(), name: 'Max' }
+          ])
+
+          column.hist = Stats.Histogram(20, true)
           column.countValues = Stats.Count()
           column.countTypes = Stats.Count()
 
@@ -249,7 +386,11 @@ document.getElementById('input').onchange = (e) => {
         let type = typeof val
         let realType
         if (type === 'number') {
-          realType = type
+          if (isNaN(val)) {
+            realType = 'missing'
+          } else {
+            realType = type
+          }
         } else if (type === 'string') {
           if (!val.length || ['NA', 'na', '-', 'NULL', 'NAN', 'NaN', 'nan'].includes(val)) {
             realType = 'missing'
@@ -267,18 +408,20 @@ document.getElementById('input').onchange = (e) => {
             console.log('Stop counting (too many unique values): ', column.name)
             delete column.countValues
           }
-          // Check if too much
+          // Check if too much non-numbers
           if (column.stats) {
             let numcount = column.countTypes.values['number']
             if (!numcount || (numcount / n < 0.7)) {
               console.log('Stop calculating stats (not numerical variable): ', column.name)
               delete column.stats
+              delete column.hist
             }
           }
         }
 
-        if (column.stats && (typeof val === 'number')) {
+        if (column.stats && (typeof val === 'number') && !isNaN(val)) {
           column.stats(val)
+          column.hist(val)
         }
 
         if (column.countValues) {
@@ -290,4 +433,24 @@ document.getElementById('input').onchange = (e) => {
       n += 1
     })
     .on('end', finalize)
+}
+
+// Get files from drag and drop
+
+function onDragOver () {
+  const col = '#C9E4FF'
+  if (drag.style.background !== col) drag.style.background = col
+}
+
+function onDragLeave () {
+  drag.style.background = 'white'
+}
+
+drag.addEventListener('dragover', onDragOver, false)
+drag.addEventListener('dragleave', onDragLeave, false)
+dnd(drag, process)
+
+// Get files from file input
+document.getElementById('input').onchange = (e) => {
+  process(e.target.files)
 }
