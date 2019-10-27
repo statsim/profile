@@ -5,6 +5,23 @@ const chart = require('tui-chart')
 const through2 = require('through2')
 const dnd = require('drag-and-drop-files')
 
+const chartTheme = {
+  chart: {
+    fontFamily: 'Roboto',
+    background: {
+      color: 'red',
+      opacity: 0
+    }
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    fontWeight: '300'
+  }
+}
+
+chart.registerTheme('chartTheme', chartTheme)
+
 function createDatasetSummary (results) {
   const container = document.createElement('div')
   container.className = 'section summary'
@@ -59,10 +76,7 @@ function createTypeSummary (results) {
       format: '1,000'
     },
     yAxis: {
-      title: 'Samples'
-    },
-    xAxis: {
-      title: 'Variables'
+      title: '% of samples'
     },
     legend: {
       align: 'right'
@@ -81,6 +95,7 @@ function createTypeSummary (results) {
 
 function createHistogram (hist) {
   const histContainer = document.createElement('div')
+  histContainer.className = 'hist-chart'
 
   const [h, b] = hist.value
   // const bins = h.map((_, i) => b[i].toFixed(1) + '-' + b[i + 1].toFixed(1))
@@ -99,6 +114,7 @@ function createHistogram (hist) {
       height: 220,
       title: 'Distribution'
     },
+    theme: 'chartTheme',
     yAxis: [
       {
         title: 'Frequency',
@@ -112,7 +128,8 @@ function createHistogram (hist) {
     series: {
       showDot: false,
       spline: true,
-      showLabel: false
+      showLabel: false,
+      pointWidth: 3
     },
     legend: {
       visible: false
@@ -128,25 +145,58 @@ function createHistogram (hist) {
   return histContainer
 }
 
+function getVariableType (countTypes, countValues, n) {
+  if (countValues) {
+    const k = Object.keys(countValues).length
+    if (k === 2) {
+      return 'Boolean'
+    } else if (k < n / 2) {
+      return 'Categorical'
+    }
+  }
+  if (countTypes['number'] && (countTypes['number'] > n / 2)) {
+    return 'Number'
+  } else if (countTypes['string'] && (countTypes['string'] > n / 2)) {
+    return 'String'
+  } else {
+    return 'Mixed'
+  }
+}
+
 function createVariablesSummary (results) {
   const container = document.createElement('div')
   container.className = 'section'
 
+  /*
   const title = document.createElement('h2')
   title.innerText = 'Variables'
   container.appendChild(title)
+  */
 
   results.columns.forEach(column => {
     console.log('Create summary for column:', column.name)
     const block = document.createElement('div')
     block.className = 'block'
 
-    const blockName = document.createElement('h4')
-    blockName.innerText = column.name
-    block.appendChild(blockName)
+    const nameBlock = document.createElement('div')
+    nameBlock.className = 'name-block'
+    const name = document.createElement('h4')
+    name.innerText = column.name
+    nameBlock.appendChild(name)
+    const type = document.createElement('p')
+    type.className = 'variable-type'
+    type.innerText = getVariableType(column.countTypes, column.countValues, results.n)
+    nameBlock.appendChild(type)
+    block.appendChild(nameBlock)
 
+    const statBlock = document.createElement('div')
+    statBlock.className = 'stat-block'
+    const statTitle = document.createElement('h4')
+    statTitle.innerText = 'Statistics'
+    statBlock.appendChild(statTitle)
     const statList = document.createElement('dl')
-    block.appendChild(statList)
+    statBlock.appendChild(statList)
+    block.appendChild(statBlock)
 
     const appendToList = (t, d) => {
       const dt = document.createElement('dt')
@@ -208,6 +258,7 @@ function createVariablesSummary (results) {
           title: `Top ${topNumber < sorted.length ? topNumber : sorted.length} of ${sorted.length} values`,
           format: '1,000'
         },
+        theme: 'chartTheme',
         yAxis: {
           title: 'Values'
         },

@@ -1,5 +1,5 @@
 html, body {
-  font-family: sans-serif;
+  font-family: Roboto, "Noto Sans", Noto, sans-serif;
   font-weight: 300;
 }
 
@@ -26,15 +26,17 @@ dd {
 }
 
 #logo {
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  position: fixed;
+  top: 16px;
+  right: 16px;
   margin: 0;
   padding: 5px 6px 5px 6px;
-  font-weight: 400;
-  font-size: 17px;
-  border-bottom: 2px solid #00a9ff;
-  border-left: 2px solid  #00a9ff;
+  font-weight: 500;
+  font-size: 16px;
+  border-top: 2px solid #00a9ff;
+  border-right: 2px solid  #00a9ff;
+  z-index: 100;
+  background: #ffffffab;
 }
 
 .section {
@@ -47,11 +49,11 @@ dd {
 }
 
 #progress {
-  background: #0072FF;
+  background: #00a9ff;
   position: fixed;
   top: 0;
   left: 0;
-  height: 4px;
+  height: 3px;
 }
 
 .block {
@@ -68,21 +70,38 @@ dd {
   align-items: flex-start;
 }
 
-.block dt {
-  width: 70px;
+.block .name-block {
+  min-width: 300px;
+  margin-left: 8px;
+}
+
+.block .variable-type {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  background-color:#EEE;
+  display: inline-block;
+  padding: 4px 7px;
 }
 
 .block h4 {
-  margin: 15px 0 5px 10px;
+  margin: 15px 0 5px;
+  font-size: 20px;
+}
+
+.block .name-block h4 {
+  font-weight: 500;
+}
+
+.block .stat-block {
+  width: 100%;
+}
+
+.block .stat-block h4 {
   font-weight: 300;
-  min-width: 300px;
 }
 
-.block dl {
-  padding: 15px;
-}
-
-.block .count-chart {
+.block .count-chart, .block .hist-chart {
   padding: 5px;
 }
 
@@ -97,8 +116,9 @@ dd {
 }
 
 #drag .drag-icon {
+  font-family: sans-serif;
   font-size: 50px;
-  color: #0072FF;
+  color: #00a9ff;
 }
 
 #drag .drag-text h4 {
