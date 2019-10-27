@@ -44,9 +44,19 @@ dd {
   margin-bottom: 30px;
 }
 
-.summary, #stats, #input {
+.summary, #stats, #input, .datahead {
   margin-left: 10px;
 }
+
+#input {
+  font-weight: 300;
+  margin-top: 9px;
+}
+
+#input, #stop {
+  font-size: 12px;
+}
+
 
 #progress {
   background: #00a9ff;
@@ -103,6 +113,36 @@ dd {
 
 .block .count-chart, .block .hist-chart {
   padding: 5px;
+}
+
+.datahead {
+  overflow: auto;
+}
+
+.datahead .title {
+  margin: 10px 0 10px;
+}
+
+.datahead table {
+  font-size: 14px;
+  border-collapse: collapse;
+  border: none;
+}
+
+.datahead table tr {
+  border-bottom: 1px solid #E7E7E7;
+}
+
+.datahead table tr:nth-child(1) {
+  border-top: 2px solid #00a9ff;
+}
+
+.datahead table tr:nth-child(odd) {
+  background: #F3F3F3;
+}
+
+.datahead table td, .datahead table th {
+  padding: 4px 8px;
 }
 
 #drag {

@@ -292,6 +292,41 @@ function createVariablesSummary (results) {
   return container
 }
 
+function createHead (results) {
+  const keys = results.columns.map(c => c.name)
+  const len = results.head.length
+
+  const container = document.createElement('div')
+  container.className = 'section datahead'
+
+  const title = document.createElement('h4')
+  title.innerText = `First ${len} of ${results.n} rows`
+  title.className = 'title'
+  container.appendChild(title)
+
+  const table = document.createElement('table')
+  const headerRow = document.createElement('tr')
+  keys.forEach(k => {
+    let th = document.createElement('th')
+    th.innerText = k
+    headerRow.appendChild(th)
+  })
+  table.appendChild(headerRow)
+
+  results.head.forEach(row => {
+    const bodyRow = document.createElement('tr')
+    keys.forEach(k => {
+      const td = document.createElement('td')
+      td.innerText = row[k]
+      bodyRow.appendChild(td)
+    })
+    table.appendChild(bodyRow)
+  })
+
+  container.appendChild(table)
+  return container
+}
+
 function generateOutput (el, results) {
   // Clean output block
   while (el.firstChild) {
@@ -302,6 +337,7 @@ function generateOutput (el, results) {
   el.appendChild(createDatasetSummary(results))
   el.appendChild(createTypeSummary(results))
   el.appendChild(createVariablesSummary(results))
+  el.appendChild(createHead(results))
 }
 
 const stopButton = document.getElementById('stop')
@@ -357,12 +393,14 @@ function process (files) {
   // Key variables
   let n = 0 // Total number of samples (rows)
   let columns = [] // Columns and their stats
+  let head = []
 
   // Run when stream is ended or stopped..
   const finalize = () => {
     const results = {
       'n': n,
       'name': file.name,
+      'head': head,
       'comments': parser.info.comment_lines,
       'empty': parser.info.empty_lines,
       'invalid_length': parser.info.invalid_field_length,
@@ -422,6 +460,10 @@ function process (files) {
 
           columns.push(column)
         })
+      }
+
+      if (n < 5) {
+        head.push(obj)
       }
 
       // Iterate over all variables
