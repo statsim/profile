@@ -71,7 +71,7 @@ function createTypeSummary (results) {
   const options = {
     chart: {
       width: 980,
-      height: 600,
+      height: 400,
       title: 'Variable types',
       format: '1,000'
     },
@@ -356,8 +356,18 @@ function process (files) {
   stream.setEncoding('utf8')
 
   // Initialize CSV transform stream for parsing
+  const ext = file.name.split('.').pop().toLowerCase()
+  console.log('Got file with extension:', ext)
+
+  let delimiter
+  if (ext === 'tsv') {
+    delimiter = '\t'
+  } else {
+    delimiter = ','
+  }
+
   const parser = parseStream({
-    'delimiter': ',',
+    'delimiter': delimiter,
     'cast': true,
     'columns': true,
     'comment': '#',
