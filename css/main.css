@@ -26,15 +26,13 @@ dd {
 }
 
 #logo {
-  position: fixed;
+  position: absolute;
   top: 16px;
   right: 16px;
   margin: 0;
   padding: 5px 6px 5px 6px;
-  font-weight: 500;
-  font-size: 16px;
-  border-top: 2px solid #00a9ff;
-  border-right: 2px solid  #00a9ff;
+  font-weight: 700;
+  font-size: 18px;
   z-index: 100;
   background: #ffffffab;
 }
@@ -153,6 +151,7 @@ dd {
   text-align: center;
   padding: 30px 40px;
   border: 2px dashed #a0cbff;
+  border-radius: 10px;
 }
 
 #drag .drag-icon {
