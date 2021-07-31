@@ -4,9 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>StatSim Profile. Online data profiling</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="css/tui-chart.min.css" media="screen">
     <link rel="stylesheet" href="css/main.css" media="screen">
-    <link rel="stylesheet" href="css/roboto.css" media="screen">
+    <link type="text/css" rel="stylesheet" href="https://statsim.com/assets/common.css" media="screen"/>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7770107-2"></script>
     <script>
@@ -17,19 +18,99 @@
     </script>
   </head>
   <body>
-    <h3 id="logo">profile</h3>
-    <input id="input" type="file" multiple="false"></input>
-    <button id="stop" style="display: none">Stop</button>
-    <p id="stats"></p>
-    <div id="output"></div>
-    <div id="progress"></div>
-    <div id="drag">
-      <div class="drag-icon">↶</div>
-      <div class="drag-text">
-        <h4>Drag & Drop file here for profiling</h4>
-        <p>Data will be processed locally (on your machine) </p>
+
+    <div class="status-bar grey-bar">
+      <div class="container">
+        <div class="row">
+          <div class="col s12" style="font-size: 14px;">
+            <div id="menu"></div>
+            <a href="https://statsim.com/">StatSim</a> → <b>Profile</b>
+            <input id="input" type="file" multiple="false" style="margin-top: 6px;"></input>
+            <button id="stop" style="display: none">Stop</button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="container" style="position: relative">
+      <div class="row">
+        <p id="stats"></p>
+        <div id="output"></div>
+      </div>
+    </div>
+
+    <div id="progress"></div>
+
+    <div class="container" style="position: relative">
+      <div class="row">
+        <div id="drag">
+          <div class="drag-icon">↶</div>
+          <div class="drag-text">
+            <h4>Drag & drop a CSV file</h4> 
+            <p>Or <label for="input" style="color:#039be5; cursor: pointer; font-size: 14px;">choose a file</label></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="description" class="grey-bar">
+      <div class="container">
+        <div class="row">
+          <div class="col m12">
+            <h1>Data profiling online</h1>
+            <h2>Profile data and generate visual summaries of your CSV datasets using this free and open-source web app</h2>
+            <p>
+              Understanding data is a crucial skill in many industries. Generally, people are not good at recognizing patterns and extracting insights from raw tabular datasets. We are not computers. That's why data visualization and profiling are so important and used so often. They convert numbers into something regular people can understand. Charts. Trends. Statistics. Data profiling makes it possible to generate bird-view summaries of tabular files. It provides detailed information and descriptive statistics about each variable stored in a dataset.
+              <b>StatSim Profile</b> is a free and open-source data profiling tool working in a browser. It processes files locally, without loading them to a web server, and works even with big datasets. Up to gigabytes!
+            </p>
+          </div>
+        </div>
+
+        <div class="row features">
+          <div class="col m4 feature">
+            <h3>
+              Open large CSV files
+            </h3>
+            <p>
+              The app uses online statistical algorithms to process data sequentially without loading it all to memory. To make it possible, we developed and open-sourced <a href="https://github.com/onlinestats/">OnlineStats.js</a>, a collection of JavaScript modules for online statistical analysis.
+            </p>
+          </div>
+          <div class="col m4 feature">
+            <h3>
+              Understand your data
+            </h3>
+            <p>
+              StatSim Profile includes various statistical methods that can help you understand data better. It generates a bird-view summary of a CSV dataset, including variable types, missing values, descriptive statistics, histograms, top values, first five records.
+            </p>
+          </div>
+          <div class="col m4 feature">
+            <h3>
+              100% free and client-side
+            </h3>
+            <p>
+              StatSim Profile is a JavaScript web app living in your browser. It doesn't have any server-side code, so any dataset you profile stays on your machine. It's also fully <a href="https://github.com/statsim/profile">open-source</a> and hosted using GitHub Pages. You can even download and use it locally.
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col m12">
+            <small>
+              If you enjoyed the app, star it on GitHub. To report bugs, create an issue.<br>
+            </small>
+            <p>
+              <a class="github-button" href="https://github.com/statsim/profile" data-icon="octicon-star" data-show-count="true" aria-label="Star statsim/profile on GitHub">Star</a>
+              <a class="github-button" href="https://github.com/statsim/profile/issues" data-icon="octicon-issue-opened" data-show-count="true" aria-label="Issue statsim/profile on GitHub">Issue</a>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://statsim.com/assets/common.js"></script>
     <script src="dist/bundle.js"></script>
   </body>
 </html>

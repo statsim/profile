@@ -1,8 +1,3 @@
-html, body {
-  font-family: Roboto, "Noto Sans", Noto, sans-serif;
-  font-weight: 300;
-}
-
 dl {
   width: 100%;
   overflow: hidden;
@@ -15,6 +10,7 @@ dt {
   float: left;
   padding: 0;
   margin: 5px 10px 2px 0;
+  min-width: 30px;
   clear: left;
 }
 
@@ -22,7 +18,8 @@ dd {
   float: left;
   padding: 0;
   margin: 5px 10px 2px 0;
-  font-weight: 500;
+  font-weight: 700;
+  font-family: mono;
 }
 
 #logo {
@@ -53,8 +50,9 @@ dd {
 
 #input, #stop {
   font-size: 12px;
+  float: right;
+  margin-top: 6px;
 }
-
 
 #progress {
   background: #00a9ff;
@@ -64,32 +62,43 @@ dd {
   height: 3px;
 }
 
+#output h2 {
+  font-size: 42px;
+  font-weight: 700;
+}
+
 .block {
   display: inline-block;
-  margin: 10px;
-  padding: 2px 15px 10px 15px;
-  box-shadow: 0 0 20px #E3E3E3;
+  margin: 25px 10px;
+  padding: 10px 18px 18px 18px;
+  box-shadow: 0 10px 30px #97979736;
+  border-radius: 8px;
   position: relative;
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-content: flex-start;
   align-items: flex-start;
 }
 
+.block:hover {
+  box-shadow: 0 10px 30px #97979756;
+}
+
 .block .name-block {
-  min-width: 300px;
   margin-left: 8px;
+  width: 100%;
 }
 
 .block .variable-type {
-  margin-top: 5px;
+  margin: 17px 10px 5px;
+  padding: 4px 11px;
   font-size: 12px;
   font-weight: 400;
   background-color:#EEE;
   display: inline-block;
-  padding: 4px 7px;
+  border-radius: 30px;
 }
 
 .block h4 {
@@ -98,11 +107,14 @@ dd {
 }
 
 .block .name-block h4 {
+  float: left;
+  font-size: 24px;
   font-weight: 500;
 }
 
 .block .stat-block {
-  width: 100%;
+  width: 180px;
+  margin-left: 8px;
 }
 
 .block .stat-block h4 {
@@ -144,14 +156,12 @@ dd {
 }
 
 #drag {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  top: 50%;
   text-align: center;
   padding: 30px 40px;
+  margin: 50px auto 50px auto;
   border: 2px dashed #a0cbff;
   border-radius: 10px;
+  width: 50%;
 }
 
 #drag .drag-icon {
@@ -161,6 +171,7 @@ dd {
 }
 
 #drag .drag-text h4 {
+  font-size: 22px;
   font-weight: 300;
   margin-top: 5px;
   margin-bottom: 10px;

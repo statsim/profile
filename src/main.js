@@ -231,7 +231,7 @@ function createVariablesSummary (results) {
       let topValues = sorted.slice(0, topNumber)
       let dataCounter = topValues.map(v => column.countValues[v])
 
-      appendToList('Distinct', `${sorted.length} (${(100 * sorted.length / results.n).toFixed(2)}%)`)
+      appendToList('Unq', `${sorted.length} (${(100 * sorted.length / results.n).toFixed(2)}%)`)
 
       if (topNumber < sorted.length) {
         let other = sorted.slice(5).reduce((a, v) => a + column.countValues[v], 0)
@@ -344,14 +344,18 @@ const stopButton = document.getElementById('stop')
 const drag = document.getElementById('drag')
 
 function process (files) {
+  const t0 = performance.now()
   const file = files[0]
   const size = file.size
+  console.log('File size:', size)
 
   // Clear body background (dnd)
   drag.style.display = 'none'
 
   // Initialize read stream
-  const stream = new ReadStream(file, {chunkSize: 10240})
+
+  const stream = new ReadStream(file, { chunkSize: 10240 })
+  // const stream = new ReadStream(file, { chunkSize: size / 1000 })
   const stats = document.getElementById('stats')
   stream.setEncoding('utf8')
 
@@ -407,6 +411,8 @@ function process (files) {
 
   // Run when stream is ended or stopped..
   const finalize = () => {
+    const t1 = performance.now()
+    console.log('Execution time:', t1 - t0)
     const results = {
       'n': n,
       'name': file.name,
@@ -457,9 +463,9 @@ function process (files) {
           }
           */
           column.stats = Stats.Series([
-            { stat: Stats.Mean(), name: 'Average' },
-            { stat: Stats.Variance({ddof: 1}), name: 'Variance' },
-            { stat: Stats.Std(), name: 'Stdev' },
+            { stat: Stats.Mean(), name: 'Avg' },
+            { stat: Stats.Variance({ddof: 1}), name: 'Var' },
+            { stat: Stats.Std(), name: 'Std' },
             { stat: Stats.Min(), name: 'Min' },
             { stat: Stats.Max(), name: 'Max' }
           ])
