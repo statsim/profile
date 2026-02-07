@@ -16,7 +16,9 @@ Use **2-space indentation** and **semicolon-free** syntax. Use **single quotes**
 - Install: `npm install`
 - Tests: `npm test` (runs unit tests + Playwright E2E)
 - Lint/format: Not configured; use `npm run build-dev` as a fast sanity build
-- CLI: `node src/cli/index.js data.csv` (outputs JSON profiling result)
+- CLI:
+  - `node src/cli/index.js data.csv` (auto: summary on TTY, JSON when piped)
+  - `node src/cli/index.js data.csv --format json|summary|serve`
 
 ## Repo map
 - `src/core/`: pure-JS profiling engine (no DOM deps)
@@ -26,9 +28,12 @@ Use **2-space indentation** and **semicolon-free** syntax. Use **single quotes**
   - `columns.js`: `initColumns()`, `updateColumns()` — online-stats wrappers
   - `result.js`: `finalizeResult()` — builds versioned ProfileResult (v1)
 - `src/render/index.js`: DOM/chart rendering (tui-chart), consumes ProfileResult
-- `src/worker/profile-worker.js`: Web Worker — runs core in background thread
-- `src/main.js`: browser entry — DnD/input handlers, Worker dispatch, render
-- `src/cli/index.js`: CLI entry — `fs.createReadStream` → core → JSON output
+- `src/worker/profile-worker.js`: Web Worker — runs core in background thread (file + URL jobs)
+- `src/main.js`: browser entry — DnD/file/url handlers, Worker dispatch, render
+- `src/cli/index.js`: CLI entry — `fs.createReadStream`/stdin → core → formatter (`json|summary|serve`)
+- `src/cli/progress.js`: CLI progress renderer (spinner/progress bar)
+- `src/cli/format-summary.js`: ANSI terminal summary formatter
+- `src/cli/serve.js`: local report server for `--format serve` (`/api/result` + browser open)
 - `index.html`: UI shell and app entrypoint
 - `css/`: app styles and vendor chart CSS
 - `dist/bundle.js`: built browser bundle (generated)
@@ -41,7 +46,7 @@ Use **2-space indentation** and **semicolon-free** syntax. Use **single quotes**
 ## Definition of done
 - Run: `npm run build` (or `npm run build-dev` during iteration)
 - Add/adjust unit tests for core logic (classify, columns, result) in `tests/unit/`
-- Add/adjust E2E tests for browser upload flow in `tests/e2e/`
+- Add/adjust E2E tests for browser upload flow + URL flow in `tests/e2e/`
 - If you can't run tests: explain + add a minimal verification note
 
 ## Constraints

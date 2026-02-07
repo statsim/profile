@@ -242,4 +242,14 @@ var fileParam = params.get('file')
 if (fileParam) {
   var delimParam = parseDelimiterParam(params.get('delimiter'))
   processUrl(fileParam, delimParam)
+} else {
+  // Check if served from CLI --serve mode
+  fetch('/api/result').then(function (r) {
+    if (r.ok) return r.json()
+  }).then(function (result) {
+    if (result) {
+      drag.style.display = 'none'
+      generateOutput(document.getElementById('output'), result)
+    }
+  }).catch(function () {})
 }

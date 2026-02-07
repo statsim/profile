@@ -1,10 +1,24 @@
 {
-  "name": "statsim-profile",
-  "version": "0.0.5",
-  "description": "",
+  "name": "@statsim/profile",
+  "version": "0.1.0",
+  "description": "Streaming CSV data profiler with online statistics",
   "main": "src/core/index.js",
   "bin": {
-    "statsim-profile": "src/cli/index.js"
+    "statsim-profile": "src/cli/index.js",
+    "sprofile": "src/cli/index.js"
+  },
+  "files": [
+    "src/core/",
+    "src/cli/",
+    "dist/",
+    "css/",
+    "fonts/",
+    "index.html",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "csv-parse": "^4.6.3",
@@ -22,6 +36,7 @@
     "uglify-es": "^3.3.9"
   },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build:main": "browserify src/main.js | uglifyjs -cm > dist/bundle.js",
     "build:worker": "browserify src/worker/profile-worker.js | uglifyjs -cm > dist/worker-bundle.js",
     "build": "mkdir -p dist && npm run build:main && npm run build:worker",
@@ -36,5 +51,5 @@
     "test:unit": "tape tests/unit/*.test.js"
   },
   "author": "Anton Zemlyansky",
-  "license": "ISC"
+  "license": "MIT"
 }

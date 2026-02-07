@@ -11,16 +11,20 @@ Generate data profiles in the browser or from the command line. Data is processe
 * Histograms and top-N value counts
 * Variable type classification (Number, String, Boolean, Categorical, Mixed)
 * Load files from URL via query param: `?file=https://example.com/data.csv`
-* CLI tool for scripting: `npx statsim-profile data.csv`
+* CLI output modes: `summary`, `json`, and `serve`
+* npm package: `@statsim/profile`
 
 ### Usage
 
-**Browser:** Open [statsim.com/profile](https://statsim.com/profile/), drag a CSV file or paste a URL.
+**Browser:** Open [statsim.com/profile](https://statsim.com/profile/), drag a CSV file, paste a URL, or open a prefilled link such as `?file=https://example.com/data.csv`.
 
 **CLI:**
 ```
-npx statsim-profile data.csv          # profile a file, output JSON
-cat data.csv | npx statsim-profile --stdin  # read from stdin
+npx @statsim/profile data.csv
+sprofile data.csv                       # summary (TTY)
+sprofile data.csv --format json         # raw JSON
+sprofile data.csv --format serve        # open local browser report
+cat data.csv | sprofile --stdin         # stdin mode
 ```
 
 ### Development
