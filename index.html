@@ -48,6 +48,11 @@
           <div class="drag-text">
             <h4>Drag & drop a CSV file</h4>
             <p>Or <label for="input" style="color:#039be5; cursor: pointer; font-size: 14px;">choose a file</label></p>
+            <div class="url-input" style="margin-top: 16px;">
+              <input id="url-input" type="text" placeholder="Or paste a CSV URL (https://...)" style="width: 400px; max-width: 80%; padding: 4px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 3px;">
+              <button id="url-load" style="padding: 4px 12px; font-size: 14px; cursor: pointer; margin-left: 4px;">Load</button>
+            </div>
+            <p id="url-error" style="color: #e53935; font-size: 13px; display: none;"></p>
           </div>
         </div>
       </div>
@@ -60,7 +65,7 @@
             <h1>Data profiling online</h1>
             <h2>Use this free and open-source web app to profile data and generate visual summaries of your CSV datasets</h2>
             <p>
-              In many industries, understanding data is a vital skill. However, most people struggle to recognize patterns and extract insights from raw tabular datasets because we are not computers. That's why data visualization and profiling are invaluable tools, frequently utilized to transform raw numbers into comprehensible elements like charts, trends, and statistics. Data profiling enables the creation of overviews of tabular files, offering detailed information and descriptive statistics for each variable contained in a dataset. <b>StatSim Profile</b> is a browser-based data profiling tool that is free and open-source. It processes files locally without uploading them to a web server and can handle large datasets, even those in gigabytes.
+              In many industries, understanding data is a vital skill. However, most people struggle to recognize patterns and extract insights from raw tabular datasets because we are not computers. That's why data visualization and profiling are invaluable tools, frequently utilized to transform raw numbers into comprehensible elements like charts, trends, and statistics. Data profiling enables the creation of overviews of tabular files, offering detailed information and descriptive statistics for each variable contained in a dataset. <b>StatSim Profile</b> is a browser-based data profiling tool that is free and open-source. It processes files locally without uploading them to a web server and can handle large datasets, even those in gigabytes. You can also load CSV files directly from a URL or use the <a href="https://github.com/statsim/profile">command-line tool</a> for scripting.
             </p>
           </div>
         </div>
