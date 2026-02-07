@@ -27,8 +27,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: mkdir -p dist && npm run build
+      - run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp -r css fonts dist _site/
+          if [ -f CNAME ]; then cp CNAME _site/; fi
+          touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -14,7 +14,7 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "browserify": "^16.5.0",
-    "nodemon": "^1.19.4",
+    "nodemon": "^3.1.11",
     "tape": "^4.11.0",
     "uglify-es": "^3.3.9"
   },
