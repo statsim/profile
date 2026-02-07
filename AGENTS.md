@@ -14,27 +14,46 @@ Use **2-space indentation** and **semicolon-free** syntax. Use **single quotes**
 
 ## Quick start
 - Install: `npm install`
-- Tests: `npm test` (runs Playwright E2E against a local static server)
+- Tests: `npm test` (runs unit tests + Playwright E2E)
 - Lint/format: Not configured; use `npm run build-dev` as a fast sanity build
+- CLI:
+  - `node src/cli/index.js data.csv` (auto: summary on TTY, JSON when piped)
+  - `node src/cli/index.js data.csv --format json|summary|serve`
 
 ## Repo map
-- `src/main.js`: core browser app (streaming CSV parse, stats aggregation, output rendering)
+- `src/core/`: pure-JS profiling engine (no DOM deps)
+  - `index.js`: `profileStream(readable, opts)` — main API
+  - `constants.js`: shared constants (missing markers, thresholds, stats conventions)
+  - `classify.js`: `classifyValue()`, `getVariableType()` — pure functions
+  - `columns.js`: `initColumns()`, `updateColumns()` — online-stats wrappers
+  - `result.js`: `finalizeResult()` — builds versioned ProfileResult (v1)
+- `src/render/index.js`: DOM/chart rendering (tui-chart), consumes ProfileResult
+- `src/worker/profile-worker.js`: Web Worker — runs core in background thread (file + URL jobs)
+- `src/main.js`: browser entry — DnD/file/url handlers, Worker dispatch, render
+- `src/cli/index.js`: CLI entry — `fs.createReadStream`/stdin → core → formatter (`json|summary|serve`)
+- `src/cli/progress.js`: CLI progress renderer (spinner/progress bar)
+- `src/cli/format-summary.js`: ANSI terminal summary formatter
+- `src/cli/serve.js`: local report server for `--format serve` (`/api/result` + browser open)
 - `index.html`: UI shell and app entrypoint
 - `css/`: app styles and vendor chart CSS
 - `dist/bundle.js`: built browser bundle (generated)
+- `dist/worker-bundle.js`: built worker bundle (generated)
 - `fonts/`: local Roboto font assets
+- `tests/unit/`: tape unit tests for core modules
 - `tests/e2e/`: Playwright browser-level regression tests
 - `tests/support/`: local static server used by E2E tests
-- `docs/architecture.md`: not present in this repo
 
 ## Definition of done
 - Run: `npm run build` (or `npm run build-dev` during iteration)
-- Add/adjust tests for: browser upload flow, streaming parse behavior, missing-value classification, numeric stats gating, and top-value counting in `src/main.js`
-- If you can’t run tests: explain + add a minimal verification note
+- Add/adjust unit tests for core logic (classify, columns, result) in `tests/unit/`
+- Add/adjust E2E tests for browser upload flow + URL flow in `tests/e2e/`
+- If you can't run tests: explain + add a minimal verification note
 
 ## Constraints
 - Don’t add new production dependencies without asking.
 - No DB migrations exist in this repo; ask before introducing any persistence layer or migration tooling.
+- Update the `README.md`, `CHANGELOG.md` and `index.html` with any user-facing changes or new features.
+- Commit messages should be clear and descriptive, following the format: `feature|fix|test|docs: short description` (e.g., `feature: add new column type classification`).
 
 ## Conventions
 - Formatting: no formatter is configured; preserve existing style (2-space indentation, semicolon-free, single quotes)

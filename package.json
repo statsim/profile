@@ -1,8 +1,25 @@
 {
-  "name": "statsim-profile",
-  "version": "0.0.5",
-  "description": "",
-  "main": "src/main.js",
+  "name": "@statsim/profile",
+  "version": "0.1.0",
+  "description": "Streaming CSV data profiler with online statistics",
+  "main": "src/core/index.js",
+  "bin": {
+    "statsim-profile": "src/cli/index.js",
+    "sprofile": "src/cli/index.js"
+  },
+  "files": [
+    "src/core/",
+    "src/cli/",
+    "dist/",
+    "css/",
+    "fonts/",
+    "index.html",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "csv-parse": "^4.6.3",
     "drag-and-drop-files": "0.0.1",
@@ -14,20 +31,25 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "browserify": "^16.5.0",
-    "nodemon": "^1.19.4",
+    "nodemon": "^3.1.11",
     "tape": "^4.11.0",
     "uglify-es": "^3.3.9"
   },
   "scripts": {
-    "build": "browserify src/main.js | uglifyjs -cm > dist/bundle.js",
-    "build-dev": "browserify src/main.js -o dist/bundle.js --debug",
+    "prepublishOnly": "npm run build",
+    "build:main": "browserify src/main.js | uglifyjs -cm > dist/bundle.js",
+    "build:worker": "browserify src/worker/profile-worker.js | uglifyjs -cm > dist/worker-bundle.js",
+    "build": "mkdir -p dist && npm run build:main && npm run build:worker",
+    "build-dev:main": "browserify src/main.js -o dist/bundle.js --debug",
+    "build-dev:worker": "browserify src/worker/profile-worker.js -o dist/worker-bundle.js --debug",
+    "build-dev": "mkdir -p dist && npm run build-dev:main && npm run build-dev:worker",
     "serve:test": "node tests/support/static-server.js",
-    "test": "npm run test:e2e",
+    "test": "npm run test:unit && npm run test:e2e",
     "test:e2e": "npm run build-dev && playwright test",
     "test:e2e:headed": "npm run build-dev && PW_KEEP_OPEN=1 playwright test --headed",
     "watch": "nodemon --watch src --ext js,css,html --exec 'npm run build-dev'",
-    "test:unit": "echo \"No unit tests configured\" && exit 0"
+    "test:unit": "tape tests/unit/*.test.js"
   },
   "author": "Anton Zemlyansky",
-  "license": "ISC"
+  "license": "MIT"
 }

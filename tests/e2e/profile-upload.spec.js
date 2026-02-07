@@ -180,3 +180,86 @@ test('profiles uploaded csv and renders expected output', async ({ page }, testI
     await page.pause()
   }
 })
+
+test('profiles CSV from URL via query param', async ({ page }) => {
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url())
+    if (url.hostname === '127.0.0.1' && url.port === '4173') {
+      route.continue()
+      return
+    }
+    route.abort()
+  })
+
+  const csvUrl = 'http://127.0.0.1:4173/tests/support/fixtures/test-data.csv'
+  await page.goto('/?file=' + encodeURIComponent(csvUrl))
+
+  const summarySection = page.locator('#output .summary')
+  await expect(summarySection.locator('h2')).toHaveText('test-data.csv', { timeout: 10000 })
+
+  const summary = await summarySection.locator('dl').evaluate((container) => {
+    const values = {}
+    Array.from(container.querySelectorAll('dt')).forEach((dt) => {
+      const key = dt.textContent.replace(/:$/, '').trim()
+      const dd = dt.nextElementSibling
+      values[key] = dd ? dd.textContent.trim() : ''
+    })
+    return values
+  })
+  expect(summary['Number of variables']).toBe('3')
+  expect(summary['Number of observations']).toBe('5')
+})
+
+test('profiles CSV from URL input field', async ({ page }) => {
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url())
+    if (url.hostname === '127.0.0.1' && url.port === '4173') {
+      route.continue()
+      return
+    }
+    route.abort()
+  })
+
+  await page.goto('/')
+  const csvUrl = 'http://127.0.0.1:4173/tests/support/fixtures/test-data.csv'
+  await page.fill('#url-input', csvUrl)
+  await page.click('#url-load')
+
+  const summarySection = page.locator('#output .summary')
+  await expect(summarySection.locator('h2')).toHaveText('test-data.csv', { timeout: 10000 })
+})
+
+test('shows error for blocked URL', async ({ page }) => {
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url())
+    if (url.hostname === '127.0.0.1' && url.port === '4173') {
+      route.continue()
+      return
+    }
+    route.abort()
+  })
+
+  const blockedUrl = 'http://127.0.0.1:4173/blocked'
+  await page.goto('/?file=' + encodeURIComponent(blockedUrl))
+
+  const errorText = page.locator('#output p')
+  await expect(errorText).toContainText('HTTP 403', { timeout: 10000 })
+})
+
+test('shows error for invalid URL protocol', async ({ page }) => {
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url())
+    if (url.hostname === '127.0.0.1' && url.port === '4173') {
+      route.continue()
+      return
+    }
+    route.abort()
+  })
+
+  await page.goto('/')
+  await page.fill('#url-input', 'ftp://example.com/data.csv')
+  await page.click('#url-load')
+
+  const errorText = page.locator('#output p')
+  await expect(errorText).toContainText('Only http and https', { timeout: 5000 })
+})
