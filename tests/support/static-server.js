@@ -10,6 +10,7 @@ const mimeTypeByExt = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
+  '.csv': 'text/csv; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.ttf': 'font/ttf',
@@ -42,6 +43,14 @@ function resolveSafePath (pathname) {
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`)
+
+  // Test route: returns 403 to simulate blocked/CORS-like failure
+  if (url.pathname === '/blocked') {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' })
+    res.end('Forbidden')
+    return
+  }
+
   const filePath = resolveSafePath(decodeURIComponent(url.pathname))
 
   if (!filePath) {
