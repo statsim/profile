@@ -12,6 +12,7 @@
     "tui-chart": "^3.8.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "browserify": "^16.5.0",
     "nodemon": "^1.19.4",
     "tape": "^4.11.0",
@@ -20,8 +21,12 @@
   "scripts": {
     "build": "browserify src/main.js | uglifyjs -cm > dist/bundle.js",
     "build-dev": "browserify src/main.js -o dist/bundle.js --debug",
+    "serve:test": "node tests/support/static-server.js",
+    "test": "npm run test:e2e",
+    "test:e2e": "npm run build-dev && playwright test",
+    "test:e2e:headed": "npm run build-dev && PW_KEEP_OPEN=1 playwright test --headed",
     "watch": "nodemon --watch src --ext js,css,html --exec 'npm run build-dev'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:unit": "echo \"No unit tests configured\" && exit 0"
   },
   "author": "Anton Zemlyansky",
   "license": "ISC"
